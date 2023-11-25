@@ -1,0 +1,129 @@
+package ticTac;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+public class ticTac {
+
+	private BoardChars[][] board;
+	private char currentTurn;
+	private Random random = new Random();
+	private boolean isTwoPlayerMode;
+
+	public ticTac() {
+		board = new BoardChars[3][3];
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				board[i][j] = BoardChars.EMPTY;
+			}
+		}
+
+	}
+
+	public ticTac(boolean isTwoPlayerMode) {
+		this.isTwoPlayerMode = isTwoPlayerMode;
+		board = new BoardChars[3][3];
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				board[i][j] = BoardChars.EMPTY;
+			}
+			currentTurn = 'X';
+		}
+
+	}
+
+	public BoardChars[][] copyBoard() {
+		BoardChars[][] newBoard = new BoardChars[3][3];
+		for (int i = 0; i < 3; i++) {
+			System.arraycopy(board[i], 0, newBoard[i], 0, 3);
+		}
+		return newBoard;
+	}
+
+	public boolean makeMove(int row, int col) {
+		if (board[row][col] == BoardChars.EMPTY) {
+			board[row][col] = (currentTurn == 'X') ? BoardChars.PLAYERCHAR : BoardChars.CPUCHAR;
+			currentTurn = (currentTurn == 'X') ? 'O' : 'X'; // Switch turns
+			return true; // Move was successful
+		}
+		return false; // Move was not successful (cell already occupied)
+	}
+
+	public BoardChars[][] getBoard() {
+		return board;
+	}
+
+	public Boolean gameIsOver() {
+		// Check for win
+		if (checkForWin(BoardChars.PLAYERCHAR) || checkForWin(BoardChars.CPUCHAR)) {
+			return true;
+		}
+
+		// Check for draw
+		if (isBoardFull()) {
+			return true;
+		}
+
+		// Game is not over
+		return false;
+	}
+
+	public boolean checkForWin(BoardChars player) {
+		// Check rows, columns, and diagonals for a win
+		for (int i = 0; i < 3; i++) {
+			if (board[i][0] == player && board[i][1] == player && board[i][2] == player) {
+				return true; // Check rows
+			}
+			if (board[0][i] == player && board[1][i] == player && board[2][i] == player) {
+				return true; // Check columns
+			}
+		}
+
+		// Check diagonals
+		if (board[0][0] == player && board[1][1] == player && board[2][2] == player) {
+			return true;
+		}
+		if (board[0][2] == player && board[1][1] == player && board[2][0] == player) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean isBoardFull() {
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				if (board[i][j] == BoardChars.EMPTY) {
+					return false; // At least one cell is empty
+				}
+			}
+		}
+		return true; // No empty cells
+	}
+
+	public void cpuMove() {
+
+		if (!isTwoPlayerMode) {
+			List<int[]> emptyCells = new ArrayList<>();
+			for (int i = 0; i < 3; i++) {
+				for (int j = 0; j < 3; j++) {
+					if (board[i][j] == BoardChars.EMPTY) {
+						emptyCells.add(new int[] { i, j });
+					}
+				}
+			}
+
+			if (!emptyCells.isEmpty()) {
+				int[] move = emptyCells.get(random.nextInt(emptyCells.size()));
+				board[move[0]][move[1]] = BoardChars.CPUCHAR;
+				currentTurn = 'X'; // Switch turns after CPU move
+			}
+		}
+	}
+
+	public boolean isTwoPlayerMode() {
+		return isTwoPlayerMode;
+	}
+
+}
