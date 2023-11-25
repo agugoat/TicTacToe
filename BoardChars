@@ -1,0 +1,18 @@
+package ticTac;
+
+public enum BoardChars {
+
+	PLAYERCHAR('X'), CPUCHAR('O'), EMPTY(' ');
+
+	private final char symbol;
+
+	private BoardChars(char symbol) {
+		this.symbol = symbol;
+
+	}
+
+	public char getSymbol() {
+
+		return symbol;
+	}
+}
